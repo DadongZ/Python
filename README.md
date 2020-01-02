@@ -1,6 +1,6 @@
 # Python
-Course - teach sections
+courses - teach sections
 
-Games - for fun
+games - for fun
 
 pipelines - seamless pipeline for data preprocess and analysis
