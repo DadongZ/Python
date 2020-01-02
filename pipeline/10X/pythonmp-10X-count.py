@@ -5,53 +5,9 @@ import time
 import pandas as pd
 import multiprocessing
 import functools
+from pythonmp_10X_settings import ymlsettings
 
-
-with open("settings.yml", 'r') as stream:
-    try:
-        yml = yaml.safe_load(stream)
-    except yaml.YAMLError as exc:
-        print(exc)
-
-# Parse out YAML settings file
-makefastq = yml['makefastq']
-getcounts = yml['getcounts']
-showcmd   = yml['showcmd']
-
-cranger  = yml['cranger']
-bcl2fastq= yml['bcl2fastq']
-
-projid   = yml['projid']
-datadir  = yml['datadir']
-refdir   = yml['refdir']
-logdir   = yml['logdir']
-fastqdir = os.path.join(projid, 'outs/fastq_path/')
-
-cjobs  = yml['cjobs']
-ccores = yml['ccores']
-fcores = yml['fcores']
-ncells = yml['ncells']
-
-sampleids = yml['sampleids']
-sampsheet = yml['sampsheet']
-sampskip  = yml['sampskip']
-sampidcol = yml['sampidcol']
-sampdelim = yml['sampdelim']
-
-
-# Add bcl2fastq to UNIX PATH and print version
-os.environ['PATH'] = os.environ.get('PATH') + ":" + bcl2fastq
-print("Check bclfastq version")
-subprocess.Popen(['bcl2fastq', '--version'])
-
-
-# Read in samples from settings or sample sheet
-if sampleids is None:
-    # Read in sample ids from sample sheet
-    sampdf = pd.read_csv(sampsheet, sep = ",", skiprows = sampskip)
-    mysampids = list(sampdf[sampidcol])
-else:
-    mysampids = sampleids
+yml = ymlsettings('settings.yml')
 
 # Function to process cellranger count for each sample
 def _my10Xsample(sampid, cmdlist, logdir, showcmd):
@@ -64,51 +20,47 @@ def _my10Xsample(sampid, cmdlist, logdir, showcmd):
         p = subprocess.Popen(sampcmd, stdout = stdout, stderr = stderr)
         p.wait()
 
-
-
-
-
-# Process BCL -> FASTQ
-if makefastq:
+#Process BCL -> FASTQ
+if yml.makefastq:
     # Check for log directories
-    if not os.path.exists(logdir):
-        os.mkdir(logdir)
+    if not os.path.exists(yml.logdir):
+        os.mkdir(yml.logdir)
 
-    fcores = str(min(fcores, len(mysampids)))
-    mkfcmd = [cranger, 'mkfastq',
-              '--id='         + projid,
+    fcores = str(min(yml.fcores, len(yml.mysampids)))
+    mkfcmd = [yml.cranger, 'mkfastq',
+              '--id='         + yml.projid,
               '--qc',
-              '--run='        + datadir,
-              '--output-dir=' + fastqdir,
-              '--samplesheet='+ sampsheet,
-              '--localcores=' + fcores]
+              '--run='        + yml.datadir,
+              '--output-dir=' + yml.outdir,
+              '--samplesheet='+ yml.sampsheet,
+              '--localcores=' + str(yml.fcores)]
 
-    fout = os.path.join(logdir, "mkfastq" + ".out")
-    ferr = os.path.join(logdir, "mkfastq" + ".err")
+    fout = os.path.join(yml.logdir, "mkfastq" + ".out")
+    ferr = os.path.join(yml.logdir, "mkfastq" + ".err")
 
-    if showcmd:
+    if yml.showcmd:
         print(mkfcmd)
     
     with open(fout, 'w') as stdout, open(ferr, 'w') as stderr:
         p = subprocess.Popen(mkfcmd, stdout = stdout, stderr = stderr).wait()
 
-if getcounts:
+if yml.getcounts:
     # cellranger apparently does not have an argument to specify
     # the output directory so we only check for the existence of
     # directory for the log files
-    if not os.path.exists(logdir):
-        os.mkdir(logdir)
+    if not os.path.exists(yml.logdir):
+        os.mkdir(yml.logdir)
 
-    cntcmd = [cranger, 'count',
-              '--transcriptome='+refdir,
-              '--fastqs='       + fastqdir,
-              '--expect-cells=' +str(ncells),
-              '--localcores='   +str(ccores)]
+    cntcmd = [yml.cranger, 'count',
+              '--transcriptome='+yml.refdir,
+              '--fastqs='       + yml.outdir,
+              '--expect-cells=' +str(yml.ncells),
+              '--localcores='   +str(yml.ccores)]
 
     my10Xsample = functools.partial(_my10Xsample, cmdlist=cntcmd,
-                                    logdir=logdir, showcmd = showcmd)
+                                    logdir=yml.logdir, showcmd = yml.showcmd)
     
     
-    pools=multiprocessing.Pool(processes = cjobs)
-    out = pools.map(my10Xsample, mysampids)
+    pools=multiprocessing.Pool(processes = yml.cjobs)
+    out = pools.map(my10Xsample, yml.mysampids)
     pools.close()
