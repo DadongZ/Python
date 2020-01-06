@@ -1,8 +1,5 @@
 
-<a href="http://fvcproductions.com"><img src="https://avatars1.githubusercontent.com/u/4284691?v=3&s=200" title="FVCproductions" alt="FVCproductions"></a>
-
-<!-- [![FVCproductions](https://miro.medium.com/max/1078/1*tB7A_yPas_yS-COk-WnzFQ.jpeg) -->
-
+<a href="https://miro.medium.com/max/1078/1*tB7A_yPas_yS-COk-WnzFQ.jpeg"></a>
 
 # Python
 courses - teach sections
