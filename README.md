@@ -1,9 +1,13 @@
 
-<a href="https://miro.medium.com/max/1078/1*tB7A_yPas_yS-COk-WnzFQ.jpeg"></a>
+![alt text](https://miro.medium.com/max/1078/1*tB7A_yPas_yS-COk-WnzFQ.jpeg)
 
-# Python
-courses - teach sections
 
-games - for fun
+##courses
+Python3 tutorial
 
-pipelines - seamless pipeline for data preprocess and analysis
+##games
+Some fun projects
+
+##pipelines
+Developping seamless pipeline for data preprocess and analysis
+
