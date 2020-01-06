@@ -14,7 +14,7 @@ Tools for NGS
 ## deep_learnig
 Projects for practice machine learning
 
-## neutral network
+## neural network
 Dev neutral network
 
 ## pipelines
