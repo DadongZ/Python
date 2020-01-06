@@ -8,6 +8,14 @@ Python3 tutorial
 ## games
 Some fun projects
 
+## bioinformatics
+Tools for NGS
+
+## deep_learnig
+Projects for practice machine learning
+
+## neutral network
+Dev neutral network
+
 ## pipelines
 Developping seamless pipeline for data preprocess and analysis
-
