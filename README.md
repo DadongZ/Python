@@ -16,6 +16,3 @@ Projects for practice machine learning
 
 ## neural network
 Dev neutral network
-
-## pipelines
-Developping seamless pipeline for data preprocess and analysis
