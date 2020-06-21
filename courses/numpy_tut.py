@@ -12,3 +12,4 @@ print(dprop(b))
 
 a = np.random.rand(3,3)
 print(a[1,2])
+
